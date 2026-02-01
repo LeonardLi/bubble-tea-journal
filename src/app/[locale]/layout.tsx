@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import "../../globals.css";
+import "@/app/globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,18 +38,18 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900 min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-morandi-bg text-morandi-fg min-h-screen`}
       >
         <NextIntlClientProvider messages={messages}>
-          <header className="bg-white shadow-sm no-print">
+          <header className="bg-morandi-cream shadow-sm no-print border-b border-morandi-border">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-               <Link href="/" className="text-xl font-bold text-pink-600">{t('brand')}</Link>
+               <Link href="/" className="text-xl font-bold text-morandi-pink-dark tracking-tight">{t('brand')}</Link>
                <nav className="flex gap-4">
-                 <Link href="/" className="hover:text-pink-600">{t('home')}</Link>
-                 <div className="flex gap-2 text-sm text-gray-500 items-center border-l pl-4">
-                    <Link href="/" locale="zh" className={`hover:text-pink-600 ${locale === 'zh' ? 'font-bold text-pink-600' : ''}`}>中文</Link>
+                 <Link href="/" className="hover:text-morandi-pink transition-colors">{t('home')}</Link>
+                 <div className="flex gap-2 text-sm text-morandi-sub items-center border-l border-morandi-border pl-4">
+                    <Link href="/" locale="zh" className={`hover:text-morandi-pink transition-colors ${locale === 'zh' ? 'font-bold text-morandi-pink-dark' : ''}`}>中文</Link>
                     <span>/</span>
-                    <Link href="/" locale="en" className={`hover:text-pink-600 ${locale === 'en' ? 'font-bold text-pink-600' : ''}`}>EN</Link>
+                    <Link href="/" locale="en" className={`hover:text-morandi-pink transition-colors ${locale === 'en' ? 'font-bold text-morandi-pink-dark' : ''}`}>EN</Link>
                  </div>
                </nav>
             </div>

@@ -12,11 +12,21 @@ datasource db {
 
 model Tea {
   id          Int      @id @default(autoincrement())
+  
+  // English (Default) Fields
   name        String
   brand       String?
   description String?
   ingredients String   // Stored as text (markdown or list)
   steps       String   // Stored as text (markdown)
+  
+  // Chinese Fields
+  nameZh        String?
+  brandZh       String?
+  descriptionZh String?
+  ingredientsZh String?
+  stepsZh       String?
+
   referenceImage String?
   isMade      Boolean  @default(false)
   createdAt   DateTime @default(now())

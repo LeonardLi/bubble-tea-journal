@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Tea" ADD COLUMN "brandZh" TEXT;
+ALTER TABLE "Tea" ADD COLUMN "descriptionZh" TEXT;
+ALTER TABLE "Tea" ADD COLUMN "ingredientsZh" TEXT;
+ALTER TABLE "Tea" ADD COLUMN "nameZh" TEXT;
+ALTER TABLE "Tea" ADD COLUMN "stepsZh" TEXT;
