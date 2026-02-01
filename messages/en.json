@@ -1,6 +1,6 @@
 {
   "HomePage": {
-    "title": "Bubble Tea Journal 2026",
+    "title": "Her 100 Cups of Bubble Tea",
     "subtitle": "Making 100 different teas for my wife in 2026",
     "progress": "Progress",
     "addNew": "+ Add New Tea",
@@ -36,10 +36,10 @@
   },
   "Navigation": {
     "home": "Home",
-    "brand": "🧋 BubbleTea 100"
+    "brand": "🧋 Her 100 Cups"
   },
   "Metadata": {
-    "title": "Bubble Tea Journal 2026",
+    "title": "Her 100 Cups of Bubble Tea",
     "description": "Making 100 Bubble Teas"
   }
 }
