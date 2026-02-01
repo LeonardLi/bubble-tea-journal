@@ -29,8 +29,8 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
       <div className="bg-morandi-cream rounded-xl shadow-lg overflow-hidden border border-morandi-border p-8 print:shadow-none print:border-none print:p-0">
         
         {/* Header */}
-        <div className="flex justify-between items-start border-b border-morandi-border pb-6 mb-6">
-           <div>
+        <div className="flex flex-col md:flex-row justify-between items-start border-b border-morandi-border pb-6 mb-6 gap-6">
+           <div className="flex-1">
              <span className="text-sm font-bold text-morandi-pink-dark uppercase tracking-wide bg-morandi-pink-light px-2 py-1 rounded-md">
                {(isZh ? tea.brandZh : tea.brand) || tea.brand || t('originalRecipe')}
              </span>
@@ -38,7 +38,12 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
                {(isZh ? tea.nameZh : tea.name) || tea.name}
              </h1>
            </div>
-           <div className="no-print">
+           {tea.referenceImage && (
+             <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0 border border-morandi-border">
+               <img src={tea.referenceImage} alt={tea.name} className="w-full h-full object-cover" />
+             </div>
+           )}
+           <div className="no-print self-start md:self-center">
              <form action={async () => {
                'use server'
                await toggleMade(tea.id, !tea.isMade)

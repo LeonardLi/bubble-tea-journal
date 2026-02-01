@@ -1,6 +1,7 @@
 import { Link } from '@/i18n/navigation';
 import { db } from '@/lib/db';
 import { getTranslations } from 'next-intl/server';
+import { LuckyButton } from '@/components/LuckyButton';
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -25,9 +26,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
              <span className="text-xs text-morandi-sub uppercase tracking-wide">{t('progress')}</span>
           </div>
           <div className="h-10 w-px bg-morandi-border mx-2"></div>
-          <button className="bg-morandi-pink text-white px-4 py-2 rounded-md hover:bg-morandi-pink-dark transition-colors shadow-sm">
-            {t('addNew')}
-          </button>
+          <div className="flex gap-2">
+            <LuckyButton text={t('lucky')} locale={locale} />
+            <button className="bg-morandi-pink text-white px-4 py-2 rounded-md hover:bg-morandi-pink-dark transition-colors shadow-sm">
+              {t('addNew')}
+            </button>
+          </div>
         </div>
       </div>
       
@@ -35,6 +39,11 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         {teas.map((tea) => (
           <Link href={`/tea/${tea.id}`} key={tea.id} className="block group">
             <div className="bg-morandi-cream rounded-xl shadow-sm border border-morandi-border overflow-hidden hover:shadow-md transition-shadow duration-200 h-full flex flex-col hover:border-morandi-pink-light">
+              {tea.referenceImage && (
+                <div className="h-48 w-full relative bg-morandi-bg">
+                  <img src={tea.referenceImage} alt={tea.name} className="object-cover w-full h-full opacity-90 group-hover:opacity-100 transition-opacity" />
+                </div>
+              )}
               <div className="p-6 flex-1">
                 <div className="flex justify-between items-start mb-4">
                   <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide uppercase rounded-full bg-morandi-pink-light text-morandi-pink-dark">

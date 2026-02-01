@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
+import { redirect } from 'next/navigation'
 
 export async function toggleMade(id: number, isMade: boolean) {
   await db.tea.update({
@@ -12,6 +13,24 @@ export async function toggleMade(id: number, isMade: boolean) {
   })
   revalidatePath('/')
   revalidatePath(`/tea/${id}`)
+}
+
+export async function getRandomTea(locale: string) {
+  const unmadeTeas = await db.tea.findMany({
+    where: { isMade: false },
+    select: { id: true }
+  })
+
+  if (unmadeTeas.length === 0) {
+    return null
+  }
+
+  const randomIndex = Math.floor(Math.random() * unmadeTeas.length)
+  const randomTeaId = unmadeTeas[randomIndex].id
+  
+  // We cannot use redirect() inside a try/catch block if we want the error to be caught by Next.js boundary
+  // But here we are just returning the path to the client component to handle navigation
+  return `/${locale}/tea/${randomTeaId}`
 }
 
 export async function addReview(formData: FormData) {
