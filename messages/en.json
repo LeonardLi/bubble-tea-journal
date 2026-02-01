@@ -1,0 +1,44 @@
+{
+  "HomePage": {
+    "title": "Bubble Tea Journal 2026",
+    "subtitle": "Making 100 different teas for my wife in 2026",
+    "progress": "Progress",
+    "addNew": "+ Add New Tea",
+    "made": "Made",
+    "todo": "To Do",
+    "viewRecipe": "View Recipe →"
+  },
+  "TeaPage": {
+    "backToList": "← Back to List",
+    "markAsMade": "Mark as Made",
+    "made": "✓ Made",
+    "originalRecipe": "Original Recipe",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "reviews": "Reviews",
+    "addReview": "Add a Review",
+    "rating": "Rating",
+    "comment": "Comment",
+    "photo": "Photo",
+    "submitReview": "Submit Review",
+    "printRecipe": "Print Recipe Card",
+    "ratings": {
+      "5": "⭐⭐⭐⭐⭐ (Perfect)",
+      "4": "⭐⭐⭐⭐ (Good)",
+      "3": "⭐⭐⭐ (Average)",
+      "2": "⭐⭐ (Bad)",
+      "1": "⭐ (Terrible)"
+    },
+    "placeholders": {
+      "comment": "What did she think?"
+    }
+  },
+  "Navigation": {
+    "home": "Home",
+    "brand": "🧋 BubbleTea 100"
+  },
+  "Metadata": {
+    "title": "Bubble Tea Journal 2026",
+    "description": "Making 100 Bubble Teas"
+  }
+}

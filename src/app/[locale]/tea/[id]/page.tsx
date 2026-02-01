@@ -1,13 +1,15 @@
 import { db } from '@/lib/db'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { toggleMade, addReview } from '@/app/actions'
 import Image from 'next/image'
 import { PrintButton } from '@/components/PrintButton'
+import { getTranslations } from 'next-intl/server'
 
-export default async function TeaPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TeaPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
   const { id } = await params
   const teaId = Number(id)
+  const t = await getTranslations('TeaPage')
   
   const tea = await db.tea.findUnique({
     where: { id: teaId },
@@ -20,7 +22,7 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Navigation - Hidden on Print */}
       <div className="mb-6 no-print">
-        <Link href="/" className="text-pink-600 hover:underline">← Back to List</Link>
+        <Link href="/" className="text-pink-600 hover:underline">{t('backToList')}</Link>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 p-8 print:shadow-none print:border-none print:p-0">
@@ -28,7 +30,7 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
         {/* Header */}
         <div className="flex justify-between items-start border-b pb-6 mb-6">
            <div>
-             <span className="text-sm font-bold text-pink-600 uppercase tracking-wide">{tea.brand || 'Original Recipe'}</span>
+             <span className="text-sm font-bold text-pink-600 uppercase tracking-wide">{tea.brand || t('originalRecipe')}</span>
              <h1 className="text-4xl font-bold text-gray-900 mt-1">{tea.name}</h1>
            </div>
            <div className="no-print">
@@ -37,7 +39,7 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
                await toggleMade(tea.id, !tea.isMade)
              }}>
                <button className={`px-4 py-2 rounded-full font-bold text-sm ${tea.isMade ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                 {tea.isMade ? '✓ Made' : 'Mark as Made'}
+                 {tea.isMade ? t('made') : t('markAsMade')}
                </button>
              </form>
            </div>
@@ -46,13 +48,13 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
         {/* Recipe Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
            <div>
-             <h2 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-pink-100 inline-block">Ingredients</h2>
+             <h2 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-pink-100 inline-block">{t('ingredients')}</h2>
              <div className="prose bg-gray-50 p-4 rounded-lg print:bg-transparent print:p-0">
                <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm md:text-base">{tea.ingredients}</pre>
              </div>
            </div>
            <div>
-             <h2 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-pink-100 inline-block">Instructions</h2>
+             <h2 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-pink-100 inline-block">{t('instructions')}</h2>
              <div className="prose bg-gray-50 p-4 rounded-lg print:bg-transparent print:p-0">
                 <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm md:text-base">{tea.steps}</pre>
              </div>
@@ -62,7 +64,7 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
         {/* Reviews Section - Visible in Print if desired */}
         {tea.reviews.length > 0 && (
           <div className="mt-8 pt-8 border-t print:break-inside-avoid">
-            <h2 className="text-2xl font-bold mb-6">Reviews</h2>
+            <h2 className="text-2xl font-bold mb-6">{t('reviews')}</h2>
             <div className="space-y-6">
               {tea.reviews.map((review) => (
                 <div key={review.id} className="bg-pink-50 rounded-lg p-6 flex gap-4 print:bg-transparent print:border print:p-4 print:break-inside-avoid">
@@ -90,32 +92,32 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
 
         {/* Actions - No Print */}
         <div className="mt-8 pt-8 border-t no-print">
-           <h3 className="text-lg font-bold mb-4">Add a Review</h3>
+           <h3 className="text-lg font-bold mb-4">{t('addReview')}</h3>
            <form action={addReview} className="space-y-4 bg-gray-50 p-6 rounded-lg border">
              <input type="hidden" name="teaId" value={tea.id} />
              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+               <label className="block text-sm font-medium text-gray-700 mb-1">{t('rating')}</label>
                <select name="rating" className="w-full border rounded-md p-2">
-                 <option value="5">⭐⭐⭐⭐⭐ (Perfect)</option>
-                 <option value="4">⭐⭐⭐⭐ (Good)</option>
-                 <option value="3">⭐⭐⭐ (Average)</option>
-                 <option value="2">⭐⭐ (Bad)</option>
-                 <option value="1">⭐ (Terrible)</option>
+                 <option value="5">{t('ratings.5')}</option>
+                 <option value="4">{t('ratings.4')}</option>
+                 <option value="3">{t('ratings.3')}</option>
+                 <option value="2">{t('ratings.2')}</option>
+                 <option value="1">{t('ratings.1')}</option>
                </select>
              </div>
              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Comment</label>
-               <textarea name="comment" required className="w-full border rounded-md p-2" rows={3} placeholder="What did she think?"></textarea>
+               <label className="block text-sm font-medium text-gray-700 mb-1">{t('comment')}</label>
+               <textarea name="comment" required className="w-full border rounded-md p-2" rows={3} placeholder={t('placeholders.comment')}></textarea>
              </div>
              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+               <label className="block text-sm font-medium text-gray-700 mb-1">{t('photo')}</label>
                <input type="file" name="photo" accept="image/*" className="w-full" />
              </div>
-             <button type="submit" className="bg-pink-600 text-white px-6 py-2 rounded-md hover:bg-pink-700 w-full md:w-auto">Submit Review</button>
+             <button type="submit" className="bg-pink-600 text-white px-6 py-2 rounded-md hover:bg-pink-700 w-full md:w-auto">{t('submitReview')}</button>
            </form>
 
            <div className="mt-8 flex justify-end">
-             <PrintButton />
+             <PrintButton label={t('printRecipe')} />
            </div>
         </div>
       </div>
