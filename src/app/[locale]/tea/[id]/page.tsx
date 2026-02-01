@@ -5,6 +5,8 @@ import { toggleMade, addReview } from '@/app/actions'
 import Image from 'next/image'
 import { PrintButton } from '@/components/PrintButton'
 import { getTranslations } from 'next-intl/server'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default async function TeaPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
   const { id, locale } = await params
@@ -55,24 +57,13 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
            </div>
         </div>
 
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-
-// ... (existing imports)
-
-export default async function TeaPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
-  // ... (existing data fetching)
-
-  return (
-    // ... (existing JSX)
         {/* Recipe Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
            <div>
              <h2 className="text-xl font-bold mb-4 text-morandi-fg border-b-2 border-morandi-pink-light inline-block pb-1">{t('ingredients')}</h2>
-             <div className="bg-morandi-bg p-5 rounded-xl border border-morandi-border print:bg-transparent print:p-0 print:border-none">
+             <div className="bg-morandi-bg p-5 rounded-xl border border-morandi-border print:bg-transparent print:p-0 print:border-none prose prose-sm prose-p:text-morandi-fg prose-li:text-morandi-fg prose-strong:text-morandi-fg prose-strong:font-bold prose-ul:list-disc prose-ul:pl-4 prose-li:marker:text-morandi-pink-dark">
                <ReactMarkdown 
                  remarkPlugins={[remarkGfm]}
-                 className="prose prose-sm prose-p:text-morandi-fg prose-li:text-morandi-fg prose-strong:text-morandi-fg prose-strong:font-bold prose-ul:list-disc prose-ul:pl-4 prose-li:marker:text-morandi-pink-dark"
                >
                  {(isZh ? tea.ingredientsZh : tea.ingredients) || tea.ingredients || ''}
                </ReactMarkdown>
@@ -80,19 +71,15 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
            </div>
            <div>
              <h2 className="text-xl font-bold mb-4 text-morandi-fg border-b-2 border-morandi-pink-light inline-block pb-1">{t('instructions')}</h2>
-             <div className="bg-morandi-bg p-5 rounded-xl border border-morandi-border print:bg-transparent print:p-0 print:border-none">
+             <div className="bg-morandi-bg p-5 rounded-xl border border-morandi-border print:bg-transparent print:p-0 print:border-none prose prose-sm prose-p:text-morandi-fg prose-li:text-morandi-fg prose-strong:text-morandi-pink-dark prose-strong:font-bold prose-ol:list-decimal prose-ol:pl-4 prose-li:marker:text-morandi-pink-dark leading-relaxed space-y-2">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
-                  className="prose prose-sm prose-p:text-morandi-fg prose-li:text-morandi-fg prose-strong:text-morandi-pink-dark prose-strong:font-bold prose-ol:list-decimal prose-ol:pl-4 prose-li:marker:text-morandi-pink-dark leading-relaxed space-y-2"
                 >
                   {(isZh ? tea.stepsZh : tea.steps) || tea.steps || ''}
                 </ReactMarkdown>
              </div>
            </div>
         </div>
-    // ... (rest of JSX)
-  )
-}
 
         {/* Reviews Section - Visible in Print if desired */}
         {tea.reviews.length > 0 && (
