@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persist images
+      - ./uploads:/app/public/uploads
+      # Persist SQLite database
+      - ./db:/app/db
+    environment:
+      # Point database to the mounted volume
+      - DATABASE_URL=file:/app/db/dev.db
