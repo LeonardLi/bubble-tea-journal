@@ -1,31 +1,30 @@
 'use client'
 
 import { getRandomTea } from "@/app/actions"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { useTransition } from "react"
 
-export function LuckyButton({ text, locale }: { text: string, locale: string }) {
+export function LuckyButton() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   const handleClick = async () => {
     startTransition(async () => {
-      const path = await getRandomTea(locale)
+      const path = await getRandomTea()
       if (path) {
         router.push(path)
-      } else {
-        alert("All teas made! Congratulations!")
       }
     })
   }
 
   return (
-    <button 
+    <button
       onClick={handleClick}
       disabled={isPending}
-      className="bg-morandi-blue text-white px-4 py-2 rounded-md hover:bg-morandi-blue-light hover:text-morandi-fg transition-colors shadow-sm disabled:opacity-50"
+      title="试试手气 / I'm Feeling Lucky"
+      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-journal-gold text-white shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center text-2xl disabled:opacity-50 no-print"
     >
-      {isPending ? '...' : text}
+      {isPending ? '⏳' : '🎲'}
     </button>
   )
 }

@@ -1,9 +1,11 @@
 import { db } from '@/lib/db'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { toggleMade, addReview } from '@/app/actions'
-import Image from 'next/image'
 import { PrintButton } from '@/components/PrintButton'
+import { ReviewCard } from '@/components/ReviewCard'
+import { ReviewForm } from '@/components/ReviewForm'
 import { getTranslations } from 'next-intl/server'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -12,8 +14,8 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
   const { id, locale } = await params
   const teaId = Number(id)
   const t = await getTranslations('TeaPage')
-  const isZh = locale === 'zh';
-  
+  const isZh = locale === 'zh'
+
   const tea = await db.tea.findUnique({
     where: { id: teaId },
     include: { reviews: { orderBy: { createdAt: 'desc' } } }
@@ -21,124 +23,123 @@ export default async function TeaPage({ params }: { params: Promise<{ id: string
 
   if (!tea) notFound()
 
+  const name = ((isZh ? tea.nameZh : tea.name) || tea.name) as string
+  const brand = (isZh ? tea.brandZh : tea.brand) || tea.brand || t('originalRecipe')
+  const ingredients = (isZh ? tea.ingredientsZh : tea.ingredients) || tea.ingredients || ''
+  const steps = (isZh ? tea.stepsZh : tea.steps) || tea.steps || ''
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Navigation - Hidden on Print */}
-      <div className="mb-6 no-print">
-        <Link href="/" className="text-morandi-pink-dark hover:text-morandi-pink transition-colors font-medium">{t('backToList')}</Link>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      {/* Back link */}
+      <div className="mb-4 no-print">
+        <Link href="/" className="text-journal-sub hover:text-journal-pink-dark transition-colors text-sm">
+          {t('backToList')}
+        </Link>
       </div>
 
-      <div className="bg-morandi-cream rounded-xl shadow-lg overflow-hidden border border-morandi-border p-8 print:shadow-none print:border-none print:p-0">
-        
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start border-b border-morandi-border pb-6 mb-6 gap-6">
-           <div className="flex-1">
-             <span className="text-sm font-bold text-morandi-pink-dark uppercase tracking-wide bg-morandi-pink-light px-2 py-1 rounded-md">
-               {(isZh ? tea.brandZh : tea.brand) || tea.brand || t('originalRecipe')}
-             </span>
-             <h1 className="text-4xl font-bold text-morandi-fg mt-3 tracking-tight">
-               {(isZh ? tea.nameZh : tea.name) || tea.name}
-             </h1>
-           </div>
-           {tea.referenceImage && (
-             <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0 border border-morandi-border">
-               <img src={tea.referenceImage} alt={tea.name} className="w-full h-full object-cover" />
-             </div>
-           )}
-           <div className="no-print self-start md:self-center">
-             <form action={async () => {
-               'use server'
-               await toggleMade(tea.id, !tea.isMade)
-             }}>
-               <button className={`px-4 py-2 rounded-full font-bold text-sm transition-colors ${tea.isMade ? 'bg-morandi-green-light text-morandi-green' : 'bg-morandi-bg text-morandi-sub hover:bg-morandi-border'}`}>
-                 {tea.isMade ? t('made') : t('markAsMade')}
-               </button>
-             </form>
-           </div>
-        </div>
-
-        {/* Recipe Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-           <div>
-             <h2 className="text-xl font-bold mb-4 text-morandi-fg border-b-2 border-morandi-pink-light inline-block pb-1">{t('ingredients')}</h2>
-             <div className="bg-morandi-bg p-5 rounded-xl border border-morandi-border print:bg-transparent print:p-0 print:border-none prose prose-sm prose-p:text-morandi-fg prose-li:text-morandi-fg prose-strong:text-morandi-fg prose-strong:font-bold prose-ul:list-disc prose-ul:pl-4 prose-li:marker:text-morandi-pink-dark">
-               <ReactMarkdown 
-                 remarkPlugins={[remarkGfm]}
-               >
-                 {(isZh ? tea.ingredientsZh : tea.ingredients) || tea.ingredients || ''}
-               </ReactMarkdown>
-             </div>
-           </div>
-           <div>
-             <h2 className="text-xl font-bold mb-4 text-morandi-fg border-b-2 border-morandi-pink-light inline-block pb-1">{t('instructions')}</h2>
-             <div className="bg-morandi-bg p-5 rounded-xl border border-morandi-border print:bg-transparent print:p-0 print:border-none prose prose-sm prose-p:text-morandi-fg prose-li:text-morandi-fg prose-strong:text-morandi-pink-dark prose-strong:font-bold prose-ol:list-decimal prose-ol:pl-4 prose-li:marker:text-morandi-pink-dark leading-relaxed space-y-2">
-                <ReactMarkdown 
-                  remarkPlugins={[remarkGfm]}
-                >
-                  {(isZh ? tea.stepsZh : tea.steps) || tea.steps || ''}
-                </ReactMarkdown>
-             </div>
-           </div>
-        </div>
-
-        {/* Reviews Section - Visible in Print if desired */}
-        {tea.reviews.length > 0 && (
-          <div className="mt-8 pt-8 border-t border-morandi-border print:break-inside-avoid">
-            <h2 className="text-2xl font-bold mb-6 text-morandi-fg">{t('reviews')}</h2>
-            <div className="space-y-6">
-              {tea.reviews.map((review) => (
-                <div key={review.id} className="bg-morandi-bg/50 rounded-lg p-6 flex gap-4 border border-morandi-border print:bg-transparent print:border print:p-4 print:break-inside-avoid">
-                  {review.photoUrl && (
-                    <div className="w-32 h-32 relative flex-shrink-0 print:w-24 print:h-24">
-                      <Image src={review.photoUrl} alt="Review" fill className="object-cover rounded-md" />
-                    </div>
-                  )}
-                  <div>
-                    <div className="flex items-center mb-2">
-                      <div className="flex text-yellow-400/80">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i}>{i < review.rating ? '★' : '☆'}</span>
-                        ))}
-                      </div>
-                      <span className="text-morandi-sub text-xs ml-2">{review.createdAt.toLocaleDateString()}</span>
-                    </div>
-                    <p className="text-morandi-fg italic">"{review.comment}"</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Cover image */}
+      {tea.referenceImage && (
+        <div className="relative w-full h-72 rounded-2xl overflow-hidden mb-6 border border-journal-border">
+          <Image
+            src={tea.referenceImage}
+            alt={name}
+            fill
+            className="object-cover"
+          />
+          {/* Overlay badges */}
+          <div className="absolute bottom-3 left-3 flex gap-2">
+            <span className="text-xs font-semibold text-journal-gold bg-white/90 border border-journal-gold px-3 py-1 rounded-full">
+              {brand}
+            </span>
+            {tea.isMade && (
+              <span className="text-xs font-bold text-journal-green bg-white/90 border-2 border-dashed border-journal-green px-3 py-1 rounded-full">
+                ✓ {t('made')}
+              </span>
+            )}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Actions - No Print */}
-        <div className="mt-8 pt-8 border-t border-morandi-border no-print">
-           <h3 className="text-lg font-bold mb-4 text-morandi-fg">{t('addReview')}</h3>
-           <form action={addReview} className="space-y-4 bg-morandi-bg p-6 rounded-xl border border-morandi-border">
-             <input type="hidden" name="teaId" value={tea.id} />
-             <div>
-               <label className="block text-sm font-medium text-morandi-fg mb-1">{t('rating')}</label>
-               <select name="rating" className="w-full border border-morandi-border bg-white rounded-md p-2 text-morandi-fg focus:ring-2 focus:ring-morandi-pink-light focus:border-morandi-pink outline-none transition-all">
-                 <option value="5">{t('ratings.5')}</option>
-                 <option value="4">{t('ratings.4')}</option>
-                 <option value="3">{t('ratings.3')}</option>
-                 <option value="2">{t('ratings.2')}</option>
-                 <option value="1">{t('ratings.1')}</option>
-               </select>
-             </div>
-             <div>
-               <label className="block text-sm font-medium text-morandi-fg mb-1">{t('comment')}</label>
-               <textarea name="comment" required className="w-full border border-morandi-border bg-white rounded-md p-2 text-morandi-fg focus:ring-2 focus:ring-morandi-pink-light focus:border-morandi-pink outline-none transition-all" rows={3} placeholder={t('placeholders.comment')}></textarea>
-             </div>
-             <div>
-               <label className="block text-sm font-medium text-morandi-fg mb-1">{t('photo')}</label>
-               <input type="file" name="photo" accept="image/*" className="w-full text-morandi-sub file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-morandi-pink-light file:text-morandi-pink-dark hover:file:bg-morandi-pink/20" />
-             </div>
-             <button type="submit" className="bg-morandi-pink text-white px-6 py-2 rounded-md hover:bg-morandi-pink-dark transition-colors w-full md:w-auto shadow-sm font-medium">{t('submitReview')}</button>
-           </form>
+      {/* Tea name + mark as made */}
+      <div className="flex items-start justify-between gap-4 mb-2">
+        <h1 className="text-3xl font-bold text-journal-text tracking-tight leading-tight">
+          {name}
+        </h1>
+        <form
+          action={async () => {
+            'use server'
+            await toggleMade(tea.id, !tea.isMade)
+          }}
+          className="no-print flex-shrink-0"
+        >
+          <button
+            className={`px-4 py-1.5 rounded-full font-semibold text-sm transition-all duration-200 border-2 border-dashed ${
+              tea.isMade
+                ? 'border-journal-green bg-journal-green-light text-journal-green'
+                : 'border-journal-border bg-journal-bg text-journal-sub hover:border-journal-pink hover:text-journal-pink'
+            }`}
+          >
+            {tea.isMade ? `✓ ${t('made')}` : t('markAsMade')}
+          </button>
+        </form>
+      </div>
 
-           <div className="mt-8 flex justify-end">
-             <PrintButton label={t('printRecipe')} />
-           </div>
+      {/* If no reference image, show brand inline */}
+      {!tea.referenceImage && (
+        <span className="inline-block text-xs font-semibold text-journal-gold border border-journal-gold px-3 py-1 rounded-full mb-4">
+          {brand}
+        </span>
+      )}
+
+      {/* Gold divider */}
+      <div className="border-b border-journal-gold my-5" />
+
+      {/* Recipe: ingredients + steps */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h2 className="text-lg font-bold text-journal-text mb-3">📋 {t('ingredients')}</h2>
+          <div className="bg-journal-gold-light rounded-xl p-5 border border-journal-border prose prose-sm prose-p:text-journal-text prose-li:text-journal-text prose-strong:text-journal-text prose-ul:list-disc prose-ul:pl-4 prose-li:marker:text-journal-gold print:bg-transparent print:p-0">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{ingredients}</ReactMarkdown>
+          </div>
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-journal-text mb-3">📖 {t('instructions')}</h2>
+          <div className="bg-journal-gold-light rounded-xl p-5 border border-journal-border prose prose-sm prose-p:text-journal-text prose-li:text-journal-text prose-strong:text-journal-pink-dark prose-ol:list-decimal prose-ol:pl-4 prose-li:marker:text-journal-gold leading-relaxed print:bg-transparent print:p-0">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{steps}</ReactMarkdown>
+          </div>
+        </div>
+      </div>
+
+      {/* Gold divider */}
+      <div className="border-b border-journal-gold mb-6" />
+
+      {/* Reviews */}
+      {tea.reviews.length > 0 && (
+        <div className="mb-8 print:break-inside-avoid">
+          <h2 className="text-xl font-bold text-journal-text mb-4">📸 {t('reviews')}</h2>
+          {/* Horizontal scroll on mobile, grid on desktop */}
+          <div className="flex gap-4 overflow-x-auto pb-3 snap-x sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+            {tea.reviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Add review + print */}
+      <div className="no-print space-y-6">
+        <ReviewForm
+          teaId={tea.id}
+          action={addReview}
+          addReviewLabel={t('addReview')}
+          commentLabel={t('comment')}
+          commentPlaceholder={t('placeholders.comment')}
+          photoLabel={t('photo')}
+          submitLabel={t('submitReview')}
+        />
+
+        <div className="flex justify-end pt-2">
+          <PrintButton label={t('printRecipe')} />
         </div>
       </div>
     </div>

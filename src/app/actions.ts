@@ -15,7 +15,7 @@ export async function toggleMade(id: number, isMade: boolean) {
   revalidatePath(`/tea/${id}`)
 }
 
-export async function getRandomTea(locale: string) {
+export async function getRandomTea() {
   const unmadeTeas = await db.tea.findMany({
     where: { isMade: false },
     select: { id: true }
@@ -30,7 +30,7 @@ export async function getRandomTea(locale: string) {
   
   // We cannot use redirect() inside a try/catch block if we want the error to be caught by Next.js boundary
   // But here we are just returning the path to the client component to handle navigation
-  return `/${locale}/tea/${randomTeaId}`
+  return `/tea/${randomTeaId}`
 }
 
 export async function addReview(formData: FormData) {
