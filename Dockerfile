@@ -9,7 +9,8 @@ RUN npm install
 
 COPY . .
 
-# Generate Prisma Client
+# Generate Prisma Client (DATABASE_URL required by newer Prisma at generate time, value doesn't matter here)
+ENV DATABASE_URL="file:/tmp/dev.db"
 RUN npx prisma generate
 
 # Build the app
