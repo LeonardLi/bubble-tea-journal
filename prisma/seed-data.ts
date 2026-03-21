@@ -44,9 +44,27 @@ const brands = [
   { en: 'Tiger Sugar', zh: '老虎堂' },
 ];
 
-const getPlaceholder = (type: 'milk' | 'fruit' | 'matcha' | 'brown') => {
-  return `https://placehold.co/600x400/F7F5F2/B59E9E/png?text=${type}+Tea`; 
-};
+const milkTeaImages = [
+  'https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1571216682022-79b8841443b7?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1558350315-8aa00aa5e754?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1517231925375-bf2cb42917a5?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=800&q=80',
+];
+
+const fruitTeaImages = [
+  'https://images.unsplash.com/photo-1582236896585-6447a0492166?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1534043464124-3832c2a00904?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1626379222002-38f32244238e?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=800&q=80',
+];
 
 export const teaData: TeaSeedData[] = [
   // CHAGEE
@@ -226,7 +244,7 @@ for (const brand of brands) {
       ingred = `- 100g Fresh ${fruit.en}\n- 200ml ${base.en} Tea\n- 30ml Syrup\n- Ice`;
       ingredientsZh = `- 100克 新鲜${fruit.zh}\n- 200毫升 ${base.zh}茶汤\n- 30毫升 糖浆\n- 冰块`;
       
-      img = `https://placehold.co/600x400/F7F5F2/B59E9E/png?text=${fruit.en}+Tea`;
+      img = fruitTeaImages[count % fruitTeaImages.length];
     } else {
       name = `${base.en} ${style.en}`;
       nameZh = `${base.zh}${style.zh}`;
@@ -236,7 +254,7 @@ for (const brand of brands) {
       ingred = `- 10g ${base.en} Leaves\n- 200ml Milk/Cream\n- 25ml Sugar\n- Toppings (opt)`;
       ingredientsZh = `- 10克 ${base.zh}茶叶\n- 200毫升 牛奶/奶油\n- 25毫升 糖\n- 小料（可选）`;
       
-      img = `https://placehold.co/600x400/F7F5F2/B59E9E/png?text=${base.en}+Milk+Tea`;
+      img = milkTeaImages[count % milkTeaImages.length];
     }
 
     teaData.push({
